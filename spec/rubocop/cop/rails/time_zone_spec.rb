@@ -16,7 +16,7 @@ describe RuboCop::Cop::Rails::TimeZone, :config do
 
       it "registers an offense for #{klass}.now" do
         new_source = autocorrect_source(cop, "#{klass}.now")
-        expect(new_source).to eq('Time.zone.today')
+        expect(new_source).to eq('Time.zone.now')
       end
 
       it "registers an offense for #{klass}.now.in_time_zone" do
@@ -33,6 +33,11 @@ describe RuboCop::Cop::Rails::TimeZone, :config do
     it 'registers an offense for Time.parse' do
       inspect_source(cop, 'Time.parse("2012-03-02 16:05:37")')
       expect(cop.offenses.size).to eq(1)
+    end
+
+    it 'corrects an offense for Time.parse' do
+      new_source = autocorrect_source(cop, 'Time.parse("2012-03-02 16:05:37")')
+      expect(new_source).to eq('Time.zone.parse("2012-03-02 16:05:37")')
     end
 
     it 'registers an offense for Time.strptime' do
