@@ -28,6 +28,11 @@ describe RuboCop::Cop::Rails::TimeZone, :config do
         inspect_source(cop, "#{klass}.new(2012, 6, 10, 12, 00)")
         expect(cop.offenses.size).to eq(1)
       end
+
+      it "corrects an offense for #{klass}.new" do
+        new_source = autocorrect_source(cop, "#{klass}.new(2012, 6, 10, 12, 00)")
+        expect(new_source).to eq('Time.zone.local(2012, 6, 10, 12, 00)')
+      end
     end
 
     it 'registers an offense for Time.parse' do

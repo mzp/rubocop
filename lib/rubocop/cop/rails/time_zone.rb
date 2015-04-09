@@ -45,10 +45,17 @@ module RuboCop
 
         def autocorrect(node)
           @corrections << lambda do |corrector|
-            e = node.child_nodes.first.loc.expression
+            obj, meth, *_ = *node
+            e = node.loc.expression
             range = Parser::Source::Range.new(e.source_buffer,
                                               e.begin_pos, e.end_pos)
-            corrector.replace(range, 'Time.zone')
+
+            if meth == :new
+              safe_meth = :local
+            else
+              safe_meth = meth
+            end
+            corrector.replace(range, range.source.sub(/[^.]+.#{meth}/, "Time.zone.#{safe_meth}"))
           end
         end
 
