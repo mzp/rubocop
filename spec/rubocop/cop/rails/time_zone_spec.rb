@@ -14,6 +14,11 @@ describe RuboCop::Cop::Rails::TimeZone, :config do
         expect(cop.offenses.size).to eq(1)
       end
 
+      it "registers an offense for #{klass}.now" do
+        new_source = autocorrect_source(cop, "#{klass}.now")
+        expect(new_source).to eq('Time.zone.today')
+      end
+
       it "registers an offense for #{klass}.now.in_time_zone" do
         inspect_source(cop, "#{klass}.now.in_time_zone")
         expect(cop.offenses.size).to eq(1)
