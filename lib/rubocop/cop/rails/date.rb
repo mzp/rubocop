@@ -64,6 +64,18 @@ module RuboCop
                      )
         end
 
+        def autocorrect(node)
+          if [:today, :current].include? extract_method(node)
+            @corrections << lambda do |corrector|
+              e = node.loc.expression
+              range = Parser::Source::Range.new(e.source_buffer,
+                                                e.begin_pos, e.end_pos)
+
+              corrector.replace(range, 'Time.zone.today')
+            end
+          end
+        end
+
         private
 
         def check_date_node(node)

@@ -15,6 +15,13 @@ describe RuboCop::Cop::Rails::Date, :config do
       end
     end
 
+    %w(today current).each do |day|
+      it "correct an offence for Date.#{day}" do
+        new_source = autocorrect_source(cop, "Date.#{day}")
+        expect(new_source).to eq('Time.zone.today')
+      end
+    end
+
     %w(to_time to_time_in_current_zone).each do |method|
       it "registers an offense for ##{method}" do
         inspect_source(cop, "date.#{method}")
